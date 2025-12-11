@@ -11,30 +11,26 @@ const securityHeaders = [
   },
   {
     key: "Referrer-Policy",
-    value: "strict-origin-when-cross-origin",
+    value: "strict-origin",
   },
   {
     key: "Permissions-Policy",
     value:
-      "camera=(), microphone=(), geolocation=(), interest-cohort=()",
-  },
-  {
-    key: "X-XSS-Protection",
-    value: "1; mode=block",
+      "camera=(), microphone=(), geolocation=()",
   },
 ];
 
-// CSP สำหรับ production (เข้มที่สุด)
+// CSP สำหรับ production (ปลอดภัย + Compatible กับ Next.js)
 const prodCsp = `
   default-src 'self';
-  script-src 'self';
-  style-src 'self';
+  script-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline';
   img-src 'self' data: https:;
   connect-src 'self' https://script.google.com https://script.googleusercontent.com;
   font-src 'self';
 `.replace(/\n/g, "");
 
-// CSP สำหรับ development (allow inline + eval เพื่อให้ dev bundle ทำงาน)
+// CSP สำหรับ development (ต้อง allow inline + eval)
 const devCsp = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
@@ -45,28 +41,26 @@ const devCsp = `
 `.replace(/\n/g, "");
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'i.pravatar.cc',
-        port: '',
-        pathname: '',
+        protocol: "https",
+        hostname: "i.pravatar.cc",
+        pathname: "/**",
       },
     ],
   },
-  
+
   async headers() {
     return [
       {
-        source: "/(.*)", // ทุกหน้าในเว็บ
+        source: "/(.*)",
         headers: [
           ...securityHeaders,
           {
             key: "Content-Security-Policy",
             value: process.env.NODE_ENV === "development" ? devCsp : prodCsp,
-          }
+          },
         ],
       },
     ];
