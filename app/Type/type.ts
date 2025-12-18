@@ -50,7 +50,7 @@ export const LockerShoesSchema = z.object({
   nameLastNameSecound: z.string(),
   shoe_status: z.boolean(),
 }).superRefine((data, ctx) => {
-  const nftRegex = /^NFT\d{8}$/;
+  const nftRegex = /^[A-Z]{3}\d{8}$/;
 
   // --- member_IdFirst ---
   if (data.member_IdFirst && !nftRegex.test(data.member_IdFirst)) {
@@ -113,7 +113,7 @@ export const LockerSchema = z.object({
   name_Lastname: z.string(),
   active_status: z.boolean(),
 }).superRefine((data, ctx) => {
-  const nftRegex = /^NFT\d{8}$/;
+  const nftRegex = /^[A-Z]{3}\d{8}$/;
 
   // ตรวจ Member ID format
   if (data.member_ID && !nftRegex.test(data.member_ID)) {
